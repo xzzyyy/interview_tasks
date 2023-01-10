@@ -18,6 +18,9 @@
                     "Path": "${env:Path};C:/Users/veryp/Desktop/libs/boost_1_80_0;C:/Users/veryp/Desktop/MinGW64/bin"
                 }
             },
+            "presentation": {
+                "clear": true
+            },
             "problemMatcher": []
         }
     ]

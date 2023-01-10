@@ -4,33 +4,24 @@ using namespace std;
 
 void print_help()
 {
-    cout << "elvis_neotek <input-folder> <output-file>" << endl;
+    cerr << "elvis <input-folder-path>" << endl;
 }
 
-int main(int argc, char** argv)
+int main(int argc, const char* argv[])
 {
-    if (argc != 3)
+    try
     {
-        cerr << "ERROR: 2 parameters should be passed" << endl;
+        check_args(argc, argv);
+        parallel_process(argv[1]);
+        return 0;
+    }
+    catch (const exception& exc)
+    {
+        cerr << "ERROR" << endl;
+        for (int i = 0; i < argc; ++i)
+            cerr << "argv" << i << ": " << argv[i] << endl;
+        cerr << "exc: " << exc.what() << endl;
         print_help();
-        return EINVAL;
+        return 1;
     }
-
-    filesystem::path in_folder(argv[1]);
-    if (!filesystem::exists(in_folder))
-    {
-        cerr << "ERROR: input folder doesn't exist" << endl;
-        return ENOENT;
-    }
-
-    ofstream out_f(argv[2]);
-    if (!out_f)
-    {
-        cerr << "ERROR: can't create output file" << endl;
-        return EIO;
-    }
-
-    parallel_process(in_folder, out_f);
-
-    return 0;
 }

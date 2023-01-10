@@ -61,15 +61,18 @@ vector<string> Parser::parse()
 }
 // -----Parser-----------------------------------------------------------
 
-void process_file(const filesystem::directory_entry de, ofstream& out_f, mutex& mtx)
+void check_args(int argc, const char*[])
+{
+	if (argc != 2)
+        throw invalid_argument(ERR_WRONG_ARGUMENTS_NUM);
+}
+
+void process_file(const filesystem::directory_entry de, mutex& mtx)
 {
     {
         lock_guard<mutex> lg(mtx);
         cout << "thread " << this_thread::get_id() << " started" << endl;
     }
-
-    if (!de.is_regular_file())
-        return;
 
     ifstream in_f(de.path());
     if (!in_f)
@@ -96,16 +99,22 @@ void process_file(const filesystem::directory_entry de, ofstream& out_f, mutex& 
     {
         lock_guard<mutex> lg(mtx);
 
-        out_f << "[" << de.path().filename() << "]:" << endl;
+        cout << "[" << de.path().filename() << "]:" << endl;
         for (const string& str : res)
-            out_f << str << endl;
+            cout << str << endl;
 
         cout << "thread " << this_thread::get_id() << " finished" << endl;
     }
 }
 
-void parallel_process(const filesystem::path &in_folder, ofstream &out_f)
+void parallel_process(const string& dir_path)
 {
+    filesystem::path in_folder(dir_path);
+    if (!filesystem::exists(in_folder))
+        throw invalid_argument(ERR_PATH_NOT_EXIST);
+    if (!filesystem::is_directory(in_folder))
+        throw invalid_argument(ERR_PATH_NOT_DIR);
+
     unsigned thr_num = thread::hardware_concurrency();
     vector<future<void>> tasks(thr_num);
     mutex mtx;
@@ -123,7 +132,7 @@ void parallel_process(const filesystem::path &in_folder, ofstream &out_f)
             {
                 if (file_iter != file_iter_end)
                 {
-                    tasks[i] = async(launch::async, process_file, *file_iter, ref(out_f), ref(mtx));
+                    tasks[i] = async(launch::async, process_file, *file_iter, ref(mtx));
                     ++file_iter;
                     ++running;
                     started = true;
@@ -133,7 +142,7 @@ void parallel_process(const filesystem::path &in_folder, ofstream &out_f)
             {
                 if (file_iter != file_iter_end)
                 {
-                    tasks[i] = async(launch::async, &process_file, *file_iter, ref(out_f), ref(mtx));
+                    tasks[i] = async(launch::async, &process_file, *file_iter, ref(mtx));
                     ++file_iter;
                 }
                 else

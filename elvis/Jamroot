@@ -1,6 +1,6 @@
 import testing ;
 
 project elvis : requirements <include>"C:/Users/veryp/Desktop/libs/boost_1_80_0" ;
-obj elvis : elvis.cpp ;
-unit-test test_elvis : elvis test_elvis.cpp ;
-exe main_elvis : elvis main_elvis.cpp ;
+obj obj_elvis : elvis.cpp ;
+unit-test test_elvis : obj_elvis test_elvis.cpp ;
+exe elvis : obj_elvis main_elvis.cpp ;

@@ -20,7 +20,11 @@ private:
 	std::vector<std::string> separators;
 };
 
-void process_file(const std::filesystem::directory_entry de, std::ofstream& out_f, std::mutex& mtx);
-void parallel_process(const std::filesystem::path &in_folder, std::ofstream &out_f);
+void check_args(int argc, const char*[]);
+void parallel_process(const std::string& dir_path);
+
+constexpr const char* ERR_WRONG_ARGUMENTS_NUM = "wrong number of arguments";
+constexpr const char* ERR_PATH_NOT_EXIST = "the path doesn't exist";
+constexpr const char* ERR_PATH_NOT_DIR = "the path is not the folder";
 
 #endif

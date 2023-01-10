@@ -3,7 +3,7 @@
 // - что, если один разделитель это подстрока другого разделителя, какой из них должен иметь приоритет?
 // В этих случаях я считаю, что любое поведение правильное
 
-#include "elvis_neotek.hpp"
+#include "elvis.hpp"
 #include <iostream>
 #include <thread>
 #include <future>

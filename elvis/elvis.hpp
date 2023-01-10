@@ -1,5 +1,5 @@
-#ifndef ELVIS_NEOTEK_H
-#define ELVIS_NEOTEK_H
+#ifndef ELVIS_H
+#define ELVIS_H
 
 #include <map>
 #include <string>

@@ -1,6 +1,6 @@
 #define BOOST_TEST_MODULE test_elvis_neotek
 #include <boost/test/included/unit_test.hpp>
-#include "elvis_neotek.hpp"
+#include "elvis.hpp"
 using namespace std;
 
 BOOST_AUTO_TEST_CASE(one_sep)

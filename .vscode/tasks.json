@@ -7,7 +7,7 @@
             "label": "Boost Build",
             "type": "shell",
             "command": "b2",
-            "args": ["toolset=gcc"],
+            "args": ["toolset=gcc", "--build-dir=c:/users/veryp/Desktop/out"],
             "group": {
                 "kind": "build",
                 "isDefault": true

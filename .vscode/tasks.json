@@ -1,0 +1,24 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Boost Build",
+            "type": "shell",
+            "command": "b2",
+            "args": ["toolset=gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/elvis",
+                "env": {
+                    "Path": "${env:Path};C:/Users/veryp/Desktop/libs/boost_1_80_0;C:/Users/veryp/Desktop/MinGW64/bin"
+                }
+            },
+            "problemMatcher": []
+        }
+    ]
+}

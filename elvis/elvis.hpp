@@ -1,12 +1,8 @@
 #ifndef ELVIS_H
 #define ELVIS_H
 
-#include <map>
 #include <string>
 #include <vector>
-#include <filesystem>
-#include <fstream>
-#include <mutex>
 
 class Parser
 {
@@ -21,6 +17,7 @@ private:
 };
 
 void check_args(int argc, const char*[]);
+std::vector<std::string> process_file(const std::string& fpath);
 void parallel_process(const std::string& dir_path);
 
 constexpr const char* ERR_WRONG_ARGUMENTS_NUM = "wrong number of arguments";

@@ -1,12 +1,12 @@
-// Не указанные моменты:
-// - что должно быть на выходе, если один разделитель идёт вплотную за другим: пустая строка, или ничего?
-// - что, если один разделитель это подстрока другого разделителя, какой из них должен иметь приоритет?
-// В этих случаях я считаю, что любое поведение правильное
-
-#include "elvis.hpp"
+#include <string>
+#include <map>
 #include <iostream>
+#include <fstream>
+#include <filesystem>
 #include <thread>
 #include <future>
+#include <algorithm>
+#include "elvis.hpp"
 using namespace std;
 
 // -----Parser-----------------------------------------------------------
@@ -25,35 +25,45 @@ vector<string> Parser::parse()
     map<size_t, string> sep_pos_dict;
     vector<string> res;
 
+    // this is needed to always remove longs separators first and short substring of long in the second turn
+    sort(separators.begin(), separators.end(), [](const string& l, const string& r){ return l.length() < r.length(); });
+    
     for (const string& sep : separators)
     {
-        size_t pos = text.find(sep);
-        if (pos != string::npos)
+        size_t pos = 0;
+        while ((pos = text.find(sep, pos)) != string::npos)
+        {
             sep_pos_dict[pos] = sep;
+            pos += sep.length();
+        }
     }
 
     size_t cur = 0;
     size_t len = text.length();
+    auto ps = sep_pos_dict.begin();
     while (cur < len)
     {
-        auto ps = sep_pos_dict.begin();
         if (ps == sep_pos_dict.end())
         {
             res.push_back(text.substr(cur));
+            // cerr << "'" << res.back() << "'" << endl;
             cur = len;
         }
+        else if (ps->first < cur)
+            ++ps;
         else
         {
-            size_t old_pos = ps->first;
+            size_t sep_pos = ps->first;
             string sep = ps->second;
 
-            res.push_back(text.substr(cur, old_pos - cur));
-            cur = old_pos + sep.length();
+            if (sep_pos > cur)
+            {
+                res.push_back(text.substr(cur, sep_pos - cur));
+                // cerr << "'" << res.back() << "'" << endl;
+            }
+            cur = sep_pos + sep.length();
 
-            size_t new_pos = text.find(sep, cur);
-            sep_pos_dict.erase(ps);
-            if (new_pos != string::npos)
-                sep_pos_dict[new_pos] = sep;
+            ++ps;
         }
     }
     
@@ -61,50 +71,54 @@ vector<string> Parser::parse()
 }
 // -----Parser-----------------------------------------------------------
 
+mutex mtx;
+
 void check_args(int argc, const char*[])
 {
 	if (argc != 2)
         throw invalid_argument(ERR_WRONG_ARGUMENTS_NUM);
 }
 
-void process_file(const filesystem::directory_entry de, mutex& mtx)
+vector<string> process_file(const string& fpath)
 {
     {
         lock_guard<mutex> lg(mtx);
-        cout << "thread " << this_thread::get_id() << " started" << endl;
+        cerr << "thread " << this_thread::get_id() << " started" << endl;
     }
 
-    ifstream in_f(de.path());
+    ifstream in_f(fpath);       // TODO
     if (!in_f)
     {
         lock_guard<mutex> lg(mtx);
-        cerr << "ERROR: can't open file for reading: " << de << endl;
-        return;
+        cerr << "ERROR: can't open file for reading: " << fpath << endl;
+        return {};
     }
 
     Parser parser;
 
     string line;
     getline(in_f, line);
+    // cerr << "line: " << line << endl;
     parser.add_text(line);
 
+    getline(in_f, line);
     while (in_f)
     {
-        string s;
-        getline(in_f, s);
-        parser.add_sep(s);
+        // cerr << "sep: '" << line << "'" << endl;
+        parser.add_sep(line);
+        getline(in_f, line);
     }
 
     vector<string> res = parser.parse();
     {
         lock_guard<mutex> lg(mtx);
+        cerr << "thread " << this_thread::get_id() << " finished" << endl;
 
-        cout << "[" << de.path().filename() << "]:" << endl;
-        for (const string& str : res)
-            cout << str << endl;
-
-        cout << "thread " << this_thread::get_id() << " finished" << endl;
+        // cout << "[" << de.path().filename() << "]:" << endl;     // TODO
+        // for (const string& str : res)
+        //     cout << str << endl;
     }
+    return res;
 }
 
 void parallel_process(const string& dir_path)
@@ -116,7 +130,7 @@ void parallel_process(const string& dir_path)
         throw invalid_argument(ERR_PATH_NOT_DIR);
 
     unsigned thr_num = thread::hardware_concurrency();
-    vector<future<void>> tasks(thr_num);
+    vector<future<vector<string>>> tasks(thr_num);
     mutex mtx;
     // TODO | maybe we can just create as many tasks as we wish and they will be executed in cores number batches
 
@@ -132,7 +146,7 @@ void parallel_process(const string& dir_path)
             {
                 if (file_iter != file_iter_end)
                 {
-                    tasks[i] = async(launch::async, process_file, *file_iter, ref(mtx));
+                    tasks[i] = async(launch::async, process_file, file_iter->path().string());
                     ++file_iter;
                     ++running;
                     started = true;
@@ -142,12 +156,12 @@ void parallel_process(const string& dir_path)
             {
                 if (file_iter != file_iter_end)
                 {
-                    tasks[i] = async(launch::async, &process_file, *file_iter, ref(mtx));
+                    tasks[i] = async(launch::async, &process_file, file_iter->path().string());
                     ++file_iter;
                 }
                 else
                 {
-                    tasks[i] = future<void>();
+                    tasks[i] = {};
                     --running;
                 }
             }

@@ -1,5 +1,6 @@
-#include "elvis.hpp"
 #include <iostream>
+#include <thread>
+#include "elvis.hpp"
 using namespace std;
 
 void print_help()
@@ -12,8 +13,7 @@ int main(int argc, const char* argv[])
     try
     {
         check_args(argc, argv);
-        // parallel_process(argv[1]);
-        process_file(argv[1]);
+        parallel_process(argv[1]);
         return 0;
     }
     catch (const exception& exc)

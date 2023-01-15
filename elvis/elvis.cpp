@@ -6,6 +6,7 @@
 #include <thread>
 #include <future>
 #include <algorithm>
+#include <cmath>        // for `round`
 #include "elvis.hpp"
 using namespace std;
 
@@ -41,12 +42,24 @@ vector<string> Parser::parse()
     size_t cur = 0;
     size_t len = text.length();
     auto ps = sep_pos_dict.begin();
+    thread_local int last_pcnt = 0;
+    size_t cnt = 0;
     while (cur < len)
     {
+        double new_pcnt = double(cur) / len * 100;
+        if (new_pcnt > (last_pcnt + 10))
+        {
+            int new_pcnt_int = static_cast<int>(round(new_pcnt));
+            last_pcnt = new_pcnt_int;
+
+            lock_guard guard(mtx);
+            cerr << this_thread::get_id() << " | " << (string(new_pcnt_int, '.') + ' ') << new_pcnt_int << "%" << endl;
+        }
+
         if (ps == sep_pos_dict.end())
         {
             res.push_back(text.substr(cur));
-            // cerr << "'" << res.back() << "'" << endl;
+            // cerr << "'" << res.back() << "'" << endl;        // DBG
             cur = len;
         }
         else if (ps->first < cur)
@@ -59,19 +72,19 @@ vector<string> Parser::parse()
             if (sep_pos > cur)
             {
                 res.push_back(text.substr(cur, sep_pos - cur));
-                // cerr << "'" << res.back() << "'" << endl;
+                // cerr << "'" << res.back() << "'" << endl;        // DBG
             }
             cur = sep_pos + sep.length();
 
             ++ps;
         }
+        if (++cnt % 10 == 0)
+            this_thread::sleep_for(5ms);       // wasted time to demonstrate multithreading in action
     }
     
     return res;
 }
 // -----Parser-----------------------------------------------------------
-
-mutex mtx;
 
 void check_args(int argc, const char*[])
 {
@@ -81,47 +94,30 @@ void check_args(int argc, const char*[])
 
 vector<string> process_file(const string& fpath)
 {
-    {
-        lock_guard<mutex> lg(mtx);
-        cerr << "thread " << this_thread::get_id() << " started" << endl;
-    }
-
-    ifstream in_f(fpath);       // TODO
+    ifstream in_f(fpath);
     if (!in_f)
-    {
-        lock_guard<mutex> lg(mtx);
-        cerr << "ERROR: can't open file for reading: " << fpath << endl;
-        return {};
-    }
+        throw system_error(error_code{}, "can't read file [" + fpath + "]");
 
     Parser parser;
 
     string line;
     getline(in_f, line);
-    // cerr << "line: " << line << endl;
+    // cerr << "line: " << line << endl;        // DBG
     parser.add_text(line);
 
     getline(in_f, line);
     while (in_f)
     {
-        // cerr << "sep: '" << line << "'" << endl;
+        // cerr << "sep: '" << line << "'" << endl;     // DBG
         parser.add_sep(line);
         getline(in_f, line);
     }
 
     vector<string> res = parser.parse();
-    {
-        lock_guard<mutex> lg(mtx);
-        cerr << "thread " << this_thread::get_id() << " finished" << endl;
-
-        // cout << "[" << de.path().filename() << "]:" << endl;     // TODO
-        // for (const string& str : res)
-        //     cout << str << endl;
-    }
     return res;
 }
 
-void parallel_process(const string& dir_path)
+void parallel_process(const string& dir_path, unsigned thr_num, bool limit_output)
 {
     filesystem::path in_folder(dir_path);
     if (!filesystem::exists(in_folder))
@@ -129,44 +125,51 @@ void parallel_process(const string& dir_path)
     if (!filesystem::is_directory(in_folder))
         throw invalid_argument(ERR_PATH_NOT_DIR);
 
-    unsigned thr_num = thread::hardware_concurrency();
     vector<future<vector<string>>> tasks(thr_num);
-    mutex mtx;
-    // TODO | maybe we can just create as many tasks as we wish and they will be executed in cores number batches
+    vector<string> filenames(thr_num);
 
     auto file_iter = filesystem::directory_iterator(in_folder);
     auto file_iter_end = end(filesystem::directory_iterator(in_folder));
 
-    bool started = false;
     int running = 0;
-    while (!started || running > 0)
+    do
     {
         for (unsigned i = 0; i < thr_num; ++i)
-            if (!tasks[i].valid())
+        {
+            bool finished = false;
+            if (!tasks[i].valid() || (finished = tasks[i].wait_for(0ms) == future_status::ready))
             {
-                if (file_iter != file_iter_end)
+                if (finished)
                 {
-                    tasks[i] = async(launch::async, process_file, file_iter->path().string());
-                    ++file_iter;
-                    ++running;
-                    started = true;
+                    --running;
+
+                    cout << reinterpret_cast<const char*>(u8"[Имя файла ") << filenames[i] << "]:" << '\n';
+                    auto res = tasks[i].get();
+                    size_t cycle_num = min(res.size(), limit_output ? 10 : SIZE_MAX);
+                    for (size_t i = 0; i < cycle_num; ++i)
+                    {
+                        cout << res[i];
+                        if (i < cycle_num - 1)
+                            cout << '\n';
+                        else if (limit_output)
+                            cout << "..." << endl;
+                        else
+                            cout << endl;
+                    }
                 }
-            }
-            else if (tasks[i].wait_for(0ms) == future_status::ready)
-            {
+
                 if (file_iter != file_iter_end)
                 {
-                    tasks[i] = async(launch::async, &process_file, file_iter->path().string());
+                    filenames[i] = file_iter->path().string();
+                    tasks[i] = async(launch::async, process_file, filenames[i]);
+                    ++running;
                     ++file_iter;
                 }
                 else
-                {
                     tasks[i] = {};
-                    --running;
-                }
             }
+        }
         this_thread::sleep_for(100ms);
     }
-
-    cout << "running == " << running << endl;
+    while (running > 0);
 }

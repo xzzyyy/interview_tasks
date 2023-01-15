@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
+#include <thread>
 
 class Parser
 {
@@ -14,11 +16,13 @@ public:
 private:
 	std::string text;
 	std::vector<std::string> separators;
+	std::mutex mtx;
 };
 
 void check_args(int argc, const char*[]);
 std::vector<std::string> process_file(const std::string& fpath);
-void parallel_process(const std::string& dir_path);
+void parallel_process(const std::string& dir_path, unsigned thr_num = std::thread::hardware_concurrency(), 
+					  bool limit_output = false);
 
 constexpr const char* ERR_WRONG_ARGUMENTS_NUM = "wrong number of arguments";
 constexpr const char* ERR_PATH_NOT_EXIST = "the path doesn't exist";

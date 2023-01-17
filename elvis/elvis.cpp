@@ -7,6 +7,9 @@
 #include <future>
 #include <algorithm>
 #include <cmath>        // for `round`
+#if defined(_WIN32) || defined(__CYGWIN__)
+#include <windows.h>    // for `SetConsoleOutputCP`
+#endif
 #include "elvis.hpp"
 using namespace std;
 
@@ -35,7 +38,6 @@ vector<string> Parser::parse()
         while ((pos = text.find(sep, pos)) != string::npos)
         {
             sep_pos_dict[pos] = sep;
-            // cerr << "DBG | sep_pos_dict | " << pos << " | " << sep << endl;
             pos += sep.length();
         }
     }
@@ -61,10 +63,7 @@ vector<string> Parser::parse()
         {
             string fragment = text.substr(cur);
             if (fragment.length() > 0)
-            {
                 res.push_back(fragment);
-                // cerr << "res: '" << fragment << "'" << endl;        // DBG
-            }
             cur = len;
         }
         else if (ps->first < cur)
@@ -78,10 +77,7 @@ vector<string> Parser::parse()
             {
                 string fragment = text.substr(cur, sep_pos - cur);
                 if (fragment.length() > 0)
-                {
                     res.push_back(fragment);
-                    // cerr << "res: '" << fragment << "'" << endl;        // DBG
-                }
             }
             cur = sep_pos + sep.length();
 
@@ -111,13 +107,11 @@ vector<string> process_file(const string& fpath)
 
     string line;
     getline(in_f, line);
-    // cerr << "line: '" << line << "'" << endl;        // DBG
     parser.add_text(line);
 
     getline(in_f, line);
     while (in_f)
     {
-        // cerr << "sep: '" << line << "'" << endl;     // DBG
         parser.add_sep(line);
         getline(in_f, line);
     }
@@ -133,6 +127,10 @@ void parallel_process(const string& dir_path, unsigned thr_num, bool limit_outpu
         throw invalid_argument(string{ERR_PATH_NOT_EXIST});
     if (!filesystem::is_directory(in_folder))
         throw invalid_argument(string{ERR_PATH_NOT_DIR});
+
+#if defined(_WIN32) || defined(__CYGWIN__)
+    SetConsoleOutputCP(CP_UTF8);
+#endif
 
     vector<future<vector<string>>> tasks(thr_num);
     vector<string> filenames(thr_num);
@@ -152,7 +150,7 @@ void parallel_process(const string& dir_path, unsigned thr_num, bool limit_outpu
                 {
                     --running;
 
-                    cout << reinterpret_cast<const char*>(u8"[��� 䠩�� ") << filenames[i] << "]:" << '\n';
+                    cout << reinterpret_cast<const char*>("[Имя файла ") << filenames[i] << "]:" << '\n';
                     auto res = tasks[i].get();
                     size_t cycle_num = min(res.size(), limit_output ? 10 : SIZE_MAX);
                     for (size_t i = 0; i < cycle_num; ++i)

@@ -35,6 +35,7 @@ vector<string> Parser::parse()
         while ((pos = text.find(sep, pos)) != string::npos)
         {
             sep_pos_dict[pos] = sep;
+            // cerr << "DBG | sep_pos_dict | " << pos << " | " << sep << endl;
             pos += sep.length();
         }
     }
@@ -58,8 +59,12 @@ vector<string> Parser::parse()
 
         if (ps == sep_pos_dict.end())
         {
-            res.push_back(text.substr(cur));
-            // cerr << "'" << res.back() << "'" << endl;        // DBG
+            string fragment = text.substr(cur);
+            if (fragment.length() > 0)
+            {
+                res.push_back(fragment);
+                // cerr << "res: '" << fragment << "'" << endl;        // DBG
+            }
             cur = len;
         }
         else if (ps->first < cur)
@@ -71,8 +76,12 @@ vector<string> Parser::parse()
 
             if (sep_pos > cur)
             {
-                res.push_back(text.substr(cur, sep_pos - cur));
-                // cerr << "'" << res.back() << "'" << endl;        // DBG
+                string fragment = text.substr(cur, sep_pos - cur);
+                if (fragment.length() > 0)
+                {
+                    res.push_back(fragment);
+                    // cerr << "res: '" << fragment << "'" << endl;        // DBG
+                }
             }
             cur = sep_pos + sep.length();
 
@@ -89,7 +98,7 @@ vector<string> Parser::parse()
 void check_args(int argc, const char*[])
 {
 	if (argc != 2)
-        throw invalid_argument(ERR_WRONG_ARGUMENTS_NUM);
+        throw invalid_argument(string{ERR_WRONG_ARGUMENTS_NUM});
 }
 
 vector<string> process_file(const string& fpath)
@@ -102,7 +111,7 @@ vector<string> process_file(const string& fpath)
 
     string line;
     getline(in_f, line);
-    // cerr << "line: " << line << endl;        // DBG
+    // cerr << "line: '" << line << "'" << endl;        // DBG
     parser.add_text(line);
 
     getline(in_f, line);
@@ -121,9 +130,9 @@ void parallel_process(const string& dir_path, unsigned thr_num, bool limit_outpu
 {
     filesystem::path in_folder(dir_path);
     if (!filesystem::exists(in_folder))
-        throw invalid_argument(ERR_PATH_NOT_EXIST);
+        throw invalid_argument(string{ERR_PATH_NOT_EXIST});
     if (!filesystem::is_directory(in_folder))
-        throw invalid_argument(ERR_PATH_NOT_DIR);
+        throw invalid_argument(string{ERR_PATH_NOT_DIR});
 
     vector<future<vector<string>>> tasks(thr_num);
     vector<string> filenames(thr_num);
@@ -143,7 +152,7 @@ void parallel_process(const string& dir_path, unsigned thr_num, bool limit_outpu
                 {
                     --running;
 
-                    cout << reinterpret_cast<const char*>(u8"[ˆ¬ï ä ©«  ") << filenames[i] << "]:" << '\n';
+                    cout << reinterpret_cast<const char*>(u8"[ï¿½ï¿½ï¿½ ä ©ï¿½ï¿½ ") << filenames[i] << "]:" << '\n';
                     auto res = tasks[i].get();
                     size_t cycle_num = min(res.size(), limit_output ? 10 : SIZE_MAX);
                     for (size_t i = 0; i < cycle_num; ++i)

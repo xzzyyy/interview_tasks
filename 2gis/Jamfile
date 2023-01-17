@@ -1,0 +1,8 @@
+import testing ;
+
+project 2gis
+    ;
+
+unit-test 2gis
+    : 1.classes.cpp
+    ;

@@ -5,6 +5,9 @@
 #include "elvis.hpp"
 using namespace std;
 
+constexpr string_view INPUT_TEST_FILES_PATH = "elvis/test/in";
+constexpr string_view OUT_TEST_FILES_PATH = "elvis/test/out";
+
 BOOST_AUTO_TEST_CASE(one_sep)
 {
     Parser parser;
@@ -30,11 +33,11 @@ BOOST_AUTO_TEST_CASE(args)
 {
     const char* test_argv[] = {"elvis"};
     BOOST_REQUIRE_EXCEPTION(check_args(1, test_argv), invalid_argument,
-                            [](const invalid_argument& exc){ return exc.what() == string(ERR_WRONG_ARGUMENTS_NUM); });
-    BOOST_REQUIRE_EXCEPTION(parallel_process("test/in/666_in.txt"), invalid_argument, 
-                            [](const invalid_argument& exc){ return exc.what() == string(ERR_PATH_NOT_EXIST); });
-    BOOST_REQUIRE_EXCEPTION(parallel_process("test/in/1_in.txt"), invalid_argument, 
-                            [](const invalid_argument& exc){ return exc.what() == string(ERR_PATH_NOT_DIR); });
+                            [](const invalid_argument& exc){ return exc.what() == string{ERR_WRONG_ARGUMENTS_NUM}; });
+    BOOST_REQUIRE_EXCEPTION(parallel_process(string{INPUT_TEST_FILES_PATH} + "/666_in.txt"), invalid_argument, 
+                            [](const invalid_argument& exc){ return exc.what() == string{ERR_PATH_NOT_EXIST}; });
+    BOOST_REQUIRE_EXCEPTION(parallel_process(string{INPUT_TEST_FILES_PATH} + "/1_in.txt"), invalid_argument, 
+                            [](const invalid_argument& exc){ return exc.what() == string{ERR_PATH_NOT_DIR}; });
 }
 
 BOOST_AUTO_TEST_CASE(one_sep_part_of_another)
@@ -62,7 +65,7 @@ BOOST_AUTO_TEST_CASE(two_sep_in_row)
 BOOST_AUTO_TEST_CASE(one_file)
 {
     vector<string> expected;
-    ifstream exp_stream("test/out/1_out.txt");
+    ifstream exp_stream(string{OUT_TEST_FILES_PATH} + "/1_out.txt");
     string item;
     exp_stream >> item;
     while (exp_stream)
@@ -71,7 +74,7 @@ BOOST_AUTO_TEST_CASE(one_file)
         exp_stream >> item;
     }
 
-    vector<string> actual = process_file("test/in/1_in.txt");
+    vector<string> actual = process_file(string{INPUT_TEST_FILES_PATH} + "/1_in.txt");
     BOOST_TEST(expected == actual);
     
     for (const auto& str : expected)
@@ -87,11 +90,11 @@ BOOST_AUTO_TEST_CASE(multithreading)
     using namespace chrono;
 
     auto beg = high_resolution_clock::now();
-    parallel_process("test/in", 3u, true);
+    parallel_process(string{INPUT_TEST_FILES_PATH}, 3u, true);
     int ms3thr = duration_cast<milliseconds>(high_resolution_clock::now() - beg).count();
 
     beg = high_resolution_clock::now();
-    parallel_process("test/in", 1u, true);
+    parallel_process(string{INPUT_TEST_FILES_PATH}, 1u, true);
     int ms1thr = duration_cast<milliseconds>(high_resolution_clock::now() - beg).count();
 
     cerr << "1 thread: " << ms1thr << endl;

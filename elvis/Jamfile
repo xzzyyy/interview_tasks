@@ -1,10 +1,14 @@
 import testing ;
 
-project interview_tasks/elvis ;
+project elvis 
+    : requirements <include>.
+    ;
 
 obj obj_elvis : elvis.cpp ;
-obj obj_test_elvis : test_elvis.cpp /user-config//boost_lib ;
-obj obj_main_elvis : main_elvis.cpp ;
 
-unit-test test_elvis : obj_elvis obj_test_elvis ;
-exe elvis : obj_elvis obj_main_elvis ;
+unit-test test_elvis 
+    : obj_elvis test_elvis.cpp
+    ;
+exe elvis 
+    : obj_elvis main_elvis.cpp 
+    ;

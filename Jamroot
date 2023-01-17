@@ -1,0 +1,6 @@
+project interview_tasks
+    : requirements <include>$cpp_incl <include>$boost_incl
+    ;
+
+build-project 2gis ;
+build-project elvis ;

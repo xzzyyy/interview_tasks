@@ -1,0 +1,10 @@
+project user-config ;
+
+using gcc ;
+
+alias boost
+    :
+    :
+    :
+    : <include>c:/users/veryp/desktop/libs/boost_1_80_0
+    ;

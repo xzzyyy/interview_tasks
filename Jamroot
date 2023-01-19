@@ -1,5 +1,5 @@
 project interview_tasks
-    : requirements <include>$cpp_incl <include>$boost_incl
+    : requirements <implicit-dependency>/user-config//boost
     ;
 
 build-project 2gis ;

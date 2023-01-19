@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <thread>
 #include <future>
+#include <mutex>
 #include <algorithm>
 #include <cmath>        // for `round`
 #if defined(_WIN32) || defined(__CYGWIN__)
@@ -180,3 +181,5 @@ void parallel_process(const string& dir_path, unsigned thr_num, bool limit_outpu
     }
     while (running > 0);
 }
+
+mutex Parser::mtx{};

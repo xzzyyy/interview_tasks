@@ -16,7 +16,7 @@ public:
 private:
 	std::string text;
 	std::vector<std::string> separators;
-	std::mutex mtx;
+	static std::mutex mtx;
 };
 
 void check_args(int argc, const char*[]);

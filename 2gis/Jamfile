@@ -3,6 +3,6 @@ import testing ;
 project 2gis
     ;
 
-unit-test 2gis
-    : 1.classes.cpp
+unit-test 2gis-ut
+    : 1.classes.cpp 2.templates.cpp
     ;

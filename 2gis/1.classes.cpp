@@ -3,6 +3,7 @@
 #define BOOST_TEST_MODULE 2gis
 #include <boost/test/included/unit_test.hpp>
 #include <boost/test/tools/output_test_stream.hpp>
+#include "CoutRedirect.hpp"
 using namespace std;
 using namespace boost::test_tools;
 
@@ -58,23 +59,6 @@ void print_b(B&& b)
 }
 
 // ---code------------------------------------------------
-
-struct CoutRedirect
-{
-    CoutRedirect(streambuf* new_buf)
-        : old_buf(cout.rdbuf(new_buf))
-    {
-        // 
-    }
-
-    ~CoutRedirect()
-    {
-        cout.rdbuf(old_buf);
-    }
-
-private:
-    streambuf* old_buf;
-};
 
 BOOST_AUTO_TEST_CASE(classes)
 {

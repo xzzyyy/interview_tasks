@@ -73,6 +73,7 @@
         "*.ipp": "cpp",
         "csetjmp": "cpp",
         "csignal": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "ios": "cpp"
     }
 }

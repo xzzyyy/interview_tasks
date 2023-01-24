@@ -1,5 +1,5 @@
 project interview_tasks
-    : requirements <implicit-dependency>/user-config//boost
+    : requirements <implicit-dependency>/user-config//boost <include>.
     ;
 
 build-project 2gis ;

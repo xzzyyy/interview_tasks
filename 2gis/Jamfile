@@ -1,8 +1,13 @@
 import testing ;
 
 project 2gis
+    : requirements <include>.
     ;
 
 unit-test 2gis-ut
     : 1.classes.cpp 2.templates.cpp
+    ;
+
+exe optimization
+    : 3.optimization.main.cpp
     ;

@@ -1,5 +1,9 @@
+import project ;
+import path ;
+
 project interview_tasks
     : requirements <implicit-dependency>/user-config//boost <include>.
+    : build-dir [ path.join [ project.attribute user-config build-dir ] interview_tasks ]
     ;
 
 build-project 2gis ;

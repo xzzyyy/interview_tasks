@@ -18,10 +18,24 @@
     
 ## diary
 
-- 230125 (we) | 2gis > optimization > (speed UTs, memory consumption)
-- 230125 (we) | 2gis optimization task > setting up GDB debugger in Visual Studio Code
-- 230125 (we) | 2gis optimization task > space optimization debugging
-- 230124 (tu) | 2gis optimization task > (space optimization, optimization UTs)
-- 230124 (tu) | 2gis optimization task > speed optimizations with execution policies
-- 230123 (mo) | 2gis optimization task > speed optimization with parallel execution policy, pure `func`
-- 230123 (mo) | 2gis optimization task > understanding execution policies
+- memorizing QA app
+- 2gis 4th task
+- running in Linux VM
+- Linux memory consumption
+- prog_notes
+- 230127 (fr) 13:21 | prognotes, Linux memory consumption
+- 230127 (fr) 11:56 | prognotes
+- 230126 (th) 01:43 | prognotes
+- 230126 (th) 22:20 | prognotes
+- 230126 (th) 		| prognotes
+- 230126 (th) 		| prognotes
+- 230125 (we) 		| prognotes
+- 230125 (we) 		| settings build-dir system-specific
+- 230125 (we) 		| 2gis > optimization > memory consumption UTs
+- 230125 (we) 		| 2gis > optimization > (speed UTs, memory consumption)
+- 230125 (we) 		| 2gis optimization task > setting up GDB debugger in Visual Studio Code
+- 230125 (we) 		| 2gis optimization task > space optimization debugging
+- 230124 (tu) 		| 2gis optimization task > (space optimization, optimization UTs)
+- 230124 (tu) 		| 2gis optimization task > speed optimizations with execution policies
+- 230123 (mo) 		| 2gis optimization task > speed optimization with parallel execution policy, pure `func`
+- 230123 (mo) 		| 2gis optimization task > understanding execution policies

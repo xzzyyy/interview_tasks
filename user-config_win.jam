@@ -1,4 +1,6 @@
-project user-config ;
+project user-config
+    : build-dir "C:/Users/veryp/Desktop/build"
+    ;
 
 using gcc
     :

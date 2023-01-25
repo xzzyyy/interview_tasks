@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C++ GDB Windows",
+            "type": "cppdbg",
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\Users\\veryp\\Desktop\\MinGW64\\bin\\gdb.exe",
+            "request": "launch",
+            "setupCommands": [{
+                "description": "pretty printing STL classes",
+                "text": "-enable-pretty-printing"
+            }],
+            "program": "C:\\Users\\veryp\\Desktop\\build\\interview_tasks\\2gis\\gcc-12\\debug\\2gis-ut.exe",
+            "cwd": "${workspaceFolder}",
+            "environment": [{
+                "name": "PATH",
+                "value": "C:\\Users\\veryp\\Desktop\\MinGW64\\bin"
+            }],
+            "externalConsole": false
+        }
+    ]
+}

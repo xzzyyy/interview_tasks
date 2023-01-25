@@ -2,6 +2,7 @@
 #include <string>
 #include <chrono>
 #include <execution>
+#include <stdexcept>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include "3.optimization.hpp"
@@ -49,13 +50,13 @@ int main(int argc, char* argv[])
         cout << "for, par | ";
         {
             TimeSpent check_time;
-            opt.generator_speed(execution::par, size);
+            opt.generator_speed(/* execution::par, */ size);
         }
 
-        cout << "for, par_unseq | ";
+        /* cout << "for, par_unseq | ";
         {
             TimeSpent check_time;
             opt.generator_speed(execution::par_unseq, size);
-        }
+        } */
     }
 }

@@ -23,11 +23,13 @@ struct Optimization
 			{
 				sub_arr_beg[last_idx] = i;
 				last_idx += func(i) ? count + 1 : 1;
-			}
+			}												// i: 0, [0, 0], 1
+															// i: 1, [1, 1], 102
+															// i: 2, [102, 2], 103
 		}
 		int operator()(int res_idx)
 		{
-			int size = prev(sub_arr_beg.cend())->second + static_cast<int>(sub_arr_beg.size());
+			int size = prev(sub_arr_beg.cend())->first + 1 + static_cast<int>(sub_arr_beg.size());
 			if (res_idx < 0)
 				throw std::underflow_error(std::string("required idx [") + std::to_string(res_idx) + 
 										   "] is less than 0");
@@ -35,13 +37,11 @@ struct Optimization
 				throw std::overflow_error(std::string("required idx [") + std::to_string(res_idx) + 
 										  "] is more than total array size [" + std::to_string(size) + "]");
 			
-			int idx = sub_arr_beg.lower_bound(res_idx)->second;
-			int sub_idx = res_idx - idx;
+			int subarr_start = prev(sub_arr_beg.upper_bound(res_idx))->first;
+			int row_idx = prev(sub_arr_beg.upper_bound(res_idx))->second;
+			int sub_idx = res_idx - subarr_start;
 			
-			if (sub_idx == 0)
-				return idx;
-			else
-				return (sub_idx - 1) * idx;
+			return sub_idx == 0 ? row_idx : (sub_idx - 1) * row_idx;
 		}
 	private:
 		std::map<int, int> sub_arr_beg;
@@ -68,7 +68,7 @@ struct Optimization
 	}
 
 	// предложить оптимизации по производительности и по потреблению памяти
-	template<class ExPol> std::vector<int> generator_speed(ExPol&& ex_pol, const int count)
+	std::vector<int> generator_speed(const int count)
 	{
 		std::vector<int> res(count * (count + 1));
 		int sq_filled = 0;
@@ -82,7 +82,7 @@ struct Optimization
 			if (!func(i))
 				continue;
 
-            transform(ex_pol, plus_one_row.cbegin(), plus_one_row.cend(),
+            transform(std::execution::par, plus_one_row.cbegin(), plus_one_row.cend(),
 					  res.begin() + sq_filled, [i](const int src_val){ return src_val * i; });
 			sq_filled += count;
         }
@@ -98,6 +98,3 @@ struct Optimization
 };
 
 #endif
-
-// для каких бы значений ты бы написал юнит-тесты?
-// 0, 1, max_value, -1

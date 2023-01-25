@@ -3,6 +3,7 @@
 - Should I use execution policies as one of the methods to optimize code by speed?
     - so far it improves only if `func` is not pure
     - try pure `func` and two `for_each` funcs with execution policy
+        - seems only close memory regions are fit for this kind of optimizations
 - elvis test task
     - adding separators and text continually or atomically
         - I should choose **continually** to abide with spec condition "demonstrate OOP knowledge"
@@ -17,5 +18,10 @@
     
 ## diary
 
+- memory consumption, speed UTs
+- 230125 (we) | 2gis optimization task > setting up GDB debugger in Visual Studio Code
+- 230125 (we) | 2gis optimization task > space optimization debugging
+- 230124 (tu) | 2gis optimization task > (space optimization, optimization UTs)
+- 230124 (tu) | 2gis optimization task > speed optimizations with execution policies
 - 230123 (mo) | 2gis optimization task > speed optimization with parallel execution policy, pure `func`
 - 230123 (mo) | 2gis optimization task > understanding execution policies

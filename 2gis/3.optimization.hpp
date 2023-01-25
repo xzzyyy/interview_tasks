@@ -27,7 +27,7 @@ struct Optimization
 															// i: 1, [1, 1], 102
 															// i: 2, [102, 2], 103
 		}
-		int operator()(int res_idx)
+		int operator[](int res_idx) const
 		{
 			int size = prev(sub_arr_beg.cend())->first + 1 + static_cast<int>(sub_arr_beg.size());
 			if (res_idx < 0)

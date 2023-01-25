@@ -18,7 +18,7 @@
     
 ## diary
 
-- memory consumption, speed UTs
+- 230125 (we) | 2gis > optimization > (speed UTs, memory consumption)
 - 230125 (we) | 2gis optimization task > setting up GDB debugger in Visual Studio Code
 - 230125 (we) | 2gis optimization task > space optimization debugging
 - 230124 (tu) | 2gis optimization task > (space optimization, optimization UTs)

@@ -74,6 +74,8 @@
         "csetjmp": "cpp",
         "csignal": "cpp",
         "filesystem": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "any": "cpp",
+        "chrono": "cpp"
     }
 }

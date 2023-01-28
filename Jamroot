@@ -1,9 +1,14 @@
 import project ;
 import path ;
+import testing ;
 
 project interview_tasks
     : requirements <implicit-dependency>/user-config//boost <include>.
     : build-dir [ path.join [ project.attribute user-config build-dir ] interview_tasks ]
+    ;
+
+unit-test misc-ut
+    : misc-ut.cpp
     ;
 
 build-project 2gis ;

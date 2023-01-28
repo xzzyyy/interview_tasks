@@ -1,0 +1,12 @@
+project user-config
+    : build-dir /home/xzzyyy/build
+    ;
+
+using gcc ;
+
+alias boost
+    :
+    :
+    :
+    : <include>/dummy
+    ;

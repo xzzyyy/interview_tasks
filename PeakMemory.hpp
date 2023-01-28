@@ -1,36 +1,94 @@
 #ifndef PEAKMEMORY_HPP
 #define PEAKMEMORY_HPP
 
-#include <stdexcept>
+#if defined(_WIN32) || defined(__CYGWIN__)
 #include <windows.h>
 #include <psapi.h>
+#elif defined(__linux__)
+#include <string>
+#include <string_view>
+#include <fstream>
+#include <boost/process.hpp>
+#endif
 
 struct PeakMemory
 {
-    PeakMemory()
-        : peak_mem(0.0)
+    static size_t this_process_id()
     {
-        handle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, GetCurrentProcessId());
+#if defined(__linux__)
+        std::string binary_name;
+        std::ifstream("/proc/self/comm") >> binary_name;
+
+        using namespace boost::process;
+        std::string pid_str;
+        {
+            ipstream pr_stream;
+            child pr(std::string("pidof -s ") + binary_name, std_out > pr_stream);
+
+            pid_str = read_number(pr_stream);
+            pr.wait();
+        }
+        return stoull(pid_str);
+
+#elif defined(_WIN32) || defined(__CYGWIN__)
+        return GetCurrentProcessId();
+#endif
     }
-    ~PeakMemory()
+
+    static double mega()
     {
-        CloseHandle(handle);
+        return note_mem_usage() * 1.0 / 1024.0 / 1024.0;
     }
-    void note_mem_usage()
-    {
-        GetProcessMemoryInfo(handle, &mem_counters, sizeof(mem_counters));
-        peak_mem = mem_counters.PeakWorkingSetSize;
-    }
-    double mega() const
-    {
-        if (peak_mem == 0.0)
-            throw std::runtime_error("PeakMemory::note_mem_usage was never called");
-        return peak_mem * 1.0 / 1024.0 / 1024.0;
-    }
+
 private:
-    HANDLE handle;
-    PROCESS_MEMORY_COUNTERS mem_counters;
-    double peak_mem;
+
+    static size_t note_mem_usage()
+    {
+#if defined(_WIN32) || defined(__CYGWIN__)
+        PROCESS_MEMORY_COUNTERS mem_counters;
+        auto handle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, GetCurrentProcessId());
+        GetProcessMemoryInfo(handle, &mem_counters, sizeof(mem_counters));
+        CloseHandle(handle);
+        return mem_counters.PeakWorkingSetSize;
+
+#elif defined(__linux__)
+        constexpr std::string_view TMP_FN = "/tmp/peak_mem.sh";
+
+        std::string mem_str;
+        {
+            std::ofstream tmp_sh{ std::string{TMP_FN}, std::ios_base::out | std::ios_base::trunc };
+            tmp_sh << "#!/bin/sh" << std::endl;
+            tmp_sh << "cat /proc/" << this_process_id()
+                << "/status | grep 'VmPeak' | grep -E -o '[[:digit:]]+'" << std::endl;
+        }
+        std::system((std::string{ "chmod +x " } + std::string{ TMP_FN }).c_str());
+
+        using namespace boost::process;
+        {
+            ipstream pr_stream;
+            child pr{std::string{TMP_FN}, std_out > pr_stream};
+
+            mem_str = read_number(pr_stream);
+            pr.wait();
+        }
+
+        std::system((std::string{ "rm " } + std::string{ TMP_FN }).c_str());
+        return stoull(mem_str) * 1024u;
+#endif
+    }
+
+#if defined(__linux__)
+    static std::string read_number(boost::process::ipstream& ips)
+    {
+        std::string line, res;
+        while (ips && std::getline(ips, line) && !line.empty())
+        {
+            if (res.empty())
+                res = line;
+        }
+        return res;
+    }
+#endif
 };
 
 #endif

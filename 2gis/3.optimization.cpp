@@ -27,30 +27,29 @@ BOOST_AUTO_TEST_CASE(optim)
 
 BOOST_AUTO_TEST_CASE(optim_benchmarks)
 {
-    constexpr int SIZE = 20000;
+    constexpr int SIZE = 5000;
     Optimization opt;
     TimeSpent stopwatch;
     PeakMemory mem_mon;
+    double space_opt_mem = 0.0, space_src_mem = 0.0;
 
     {
         auto res = opt.generator_space(SIZE);
-        mem_mon.note_mem_usage();
+        space_opt_mem = mem_mon.mega();
         BOOST_TEST_MESSAGE("opt space | res[666]:" << res[666]);
     }
-    double space_opt = mem_mon.mega();
 
     {
         stopwatch.start();
         auto res = opt.generator(SIZE);
         stopwatch.stop();
-        mem_mon.note_mem_usage();
+        space_src_mem = mem_mon.mega();
         BOOST_TEST_MESSAGE("src | res[666]: " << res[666]);
     }
     int unopt_ms = stopwatch.spent();
-    double space_src = mem_mon.mega();
 
-    BOOST_TEST_MESSAGE("space | src: " << space_src << "; opt: " << space_opt);
-    BOOST_CHECK(space_src / 1.1 > space_opt);
+    BOOST_TEST_MESSAGE("space | src: " << space_src_mem << "; opt: " << space_opt_mem);
+    BOOST_CHECK(space_src_mem / 1.1 > space_opt_mem);
 
     stopwatch.start();
     opt.generator_speed(SIZE);

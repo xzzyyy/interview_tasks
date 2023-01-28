@@ -5,16 +5,10 @@
 #include <stdexcept>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
-#include <windows.h>
-#include <psapi.h>
 #include "3.optimization.hpp"
 #include "../TimeSpent.hpp"
+#include "../PeakMemory.hpp"
 using namespace std;
-
-double megabytes(size_t bytes)
-{
-    return bytes * 1.0 / 1024.0 / 1024.0;
-}
 
 int main(int argc, char* argv[])
 {
@@ -32,34 +26,31 @@ int main(int argc, char* argv[])
         int size = stoi(size_str);
         Optimization opt;
         TimeSpent check_time;
-
-        auto handle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, GetCurrentProcessId());
-        PROCESS_MEMORY_COUNTERS mem_counters;
+        PeakMemory mem;
+        double used_mem = 0.0;
 
         {
             auto res = opt.generator_space(size);
-            GetProcessMemoryInfo(handle, &mem_counters, sizeof(mem_counters));
-            cout << "res[666]: " << res[666] << "; peak WS: " << megabytes(mem_counters.PeakWorkingSetSize) << endl;
+            used_mem = mem.mega();
+            cout << "res[666]: " << res[666] << "; peak WS: " << used_mem << endl;
         }
 
         {
             check_time.start();
             auto res = opt.generator(size);
             check_time.stop();
-            GetProcessMemoryInfo(handle, &mem_counters, sizeof(mem_counters));
+            used_mem = mem.mega();
             cout << "unopt | ms: " << check_time.spent()
-                 << "; res[666]: " << res[666] << "; peak WS: " << megabytes(mem_counters.PeakWorkingSetSize) << endl;
+                 << "; res[666]: " << res[666] << "; peak WS: " << used_mem << endl;
         }
 
         {
             check_time.start();
             auto res = opt.generator_speed(size);
             check_time.stop();
-            GetProcessMemoryInfo(handle, &mem_counters, sizeof(mem_counters));
+            used_mem = mem.mega();
             cout << "opt | ms: " << check_time.spent()
-                 << "; res[666]: " << res[666] << "; peak WS: " << megabytes(mem_counters.PeakWorkingSetSize) << endl;
+                 << "; res[666]: " << res[666] << "; peak WS: " << used_mem << endl;
         }
-
-        CloseHandle(handle);
     }
 }

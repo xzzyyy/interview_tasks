@@ -21,9 +21,16 @@
 - memorizing QA app
 - 2gis 4th task
 - running in Linux VM
-- Linux memory consumption
+- UT should timeout
+- process memory consumption (Linux)
 - prog_notes
-- 230127 (fr) 13:21 | prognotes, Linux memory consumption
+- 230128 (sa) 21:09 | process memory consumption (Linux), debugging
+- 230128 (sa) 19:24 | installing `b2` on AlmaLinux
+- 230127 (fr) 21:16 | sudo/root problems
+- 230127 (fr) 19:13 | process memory consumption (Linux), debugging
+- 230127 (fr) 16:50 | process memory consumption (Linux), UT for memory consumption and process id
+- 230127 (fr) 15:38 | process memory consumption (Linux)
+- 230127 (fr) 13:21 | prognotes, process memory consumption (Linux)
 - 230127 (fr) 11:56 | prognotes
 - 230126 (th) 01:43 | prognotes
 - 230126 (th) 22:20 | prognotes

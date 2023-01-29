@@ -22,11 +22,11 @@ struct PeakMemory
         using namespace boost::process;
         std::string pid_str;
         {
-            ipstream pr_stream;
-            child pr(std::string("pidof -s ") + binary_name, std_out > pr_stream);
+            ipstream ps_stream;
+            child ps(std::string("pidof -s ") + binary_name, std_out > ps_stream);
 
-            pid_str = read_number(pr_stream);
-            pr.wait();
+            pid_str = read_number(ps_stream);
+            ps.wait();
         }
         return stoull(pid_str);
 
@@ -65,11 +65,11 @@ private:
 
         using namespace boost::process;
         {
-            ipstream pr_stream;
-            child pr{std::string{TMP_FN}, std_out > pr_stream};
+            ipstream ps_stream;
+            child ps{std::string{TMP_FN}, std_out > ps_stream};
 
-            mem_str = read_number(pr_stream);
-            pr.wait();
+            mem_str = read_number(ps_stream);
+            ps.wait();
         }
 
         std::system((std::string{ "rm " } + std::string{ TMP_FN }).c_str());
@@ -81,10 +81,10 @@ private:
     static std::string read_number(boost::process::ipstream& ips)
     {
         std::string line, res;
+        std::getline(ips, res);
         while (ips && std::getline(ips, line) && !line.empty())
         {
-            if (res.empty())
-                res = line;
+            // nothing
         }
         return res;
     }

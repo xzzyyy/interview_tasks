@@ -1,0 +1,14 @@
+import testing ;
+
+project elvis
+    : requirements <include>.
+    ;
+
+obj obj_elvis : elvis.cpp ;
+
+unit-test test_elvis 
+    : obj_elvis test_elvis.cpp
+    ;
+exe elvis 
+    : obj_elvis main_elvis.cpp 
+    ;

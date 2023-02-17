@@ -1,13 +1,10 @@
 #include <iostream>
 #include <array>
 
-template<class T>
-class Vector3D
+template<typename T> class Vector3D
 {
 public:
-    Vector3D() = delete;
-
-    Vector3D(const T& x, const T& y, const T& z)
+    template<typename S> Vector3D(const S& x, const S& y, const S& z)
     {
         coords[0] = x;
         coords[1] = y;
@@ -58,6 +55,7 @@ private:
 
 int main()
 {
+    // Vector3D<int> i_err;     // error
     Vector3D<int> i_vec(1, 2, 3);
     Vector3D<double> d_vec(1.1, 2.2, 3.3);
     std::cout << (i_vec * i_vec) << std::endl;

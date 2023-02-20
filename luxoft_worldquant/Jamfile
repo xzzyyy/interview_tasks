@@ -1,0 +1,7 @@
+import testing ;
+
+project luxoft_worldquant ;
+
+unit-test luxoft_worldquant
+    : luxoft.worldquant.cpp
+    ;

@@ -13,3 +13,4 @@ unit-test misc-ut
 
 build-project 2gis ;
 build-project elvis ;
+build-project luxoft_worldquant ;

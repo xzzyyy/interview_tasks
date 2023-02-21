@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(test_move_const_class)
     AcceptsMoveInit<std::string> from = { std::string{ STR } };
     AcceptsMoveInit<std::string> to{ std::move(from) };
 
-    BOOST_CHECK_EQUAL(STR, to.val);
+    BOOST_TEST(STR == to.val);
     BOOST_TEST_MESSAGE("to avoid compiler removal of this code: " << to.val);
 }
 
@@ -82,24 +82,24 @@ private:
 
 BOOST_AUTO_TEST_CASE(test_Pair)
 {
-    BOOST_CHECK_THROW((Pair{ nullptr, nullptr }), std::invalid_argument);
+    BOOST_REQUIRE_THROW((Pair{ nullptr, nullptr }), std::invalid_argument);
 
     Pair empty;
-    BOOST_CHECK_EQUAL(", ", empty.str());
+    BOOST_TEST(", " == empty.str());
 
     const char* str1 = "gopa";
     const char* str2 = "pizda";
 
     Pair orig{ str1, str2 };
     Pair copy_constr(orig);
-    BOOST_CHECK(orig.str() == copy_constr.str());
+    BOOST_TEST(orig.str() == copy_constr.str());
     
     Pair copy_assignment = orig;
-    BOOST_CHECK(orig.str() == copy_assignment.str());
+    BOOST_TEST(orig.str() == copy_assignment.str());
     
     Pair move_into_c(std::move(copy_constr));
-    BOOST_CHECK(orig.str() == move_into_c.str());
+    BOOST_TEST(orig.str() == move_into_c.str());
     
     Pair move_into_a(std::move(copy_assignment));
-    BOOST_CHECK(orig.str() == move_into_a.str());
+    BOOST_TEST(orig.str() == move_into_a.str());
 }

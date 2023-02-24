@@ -5,62 +5,36 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "2gis-ut",
+            "name": "UT",
             "type": "cppdbg",
-            "MIMode": "gdb",
-            "windows":
-            {
-                "miDebuggerPath": "C:\\Users\\veryp\\Desktop\\MinGW64\\bin\\gdb.exe"
-            },
-            "linux": {
-                "miDebuggerPath": "/usr/bin/gdb"
-            },
             "request": "launch",
+            "program": "",
+            "MIMode": "gdb",
             "setupCommands": [{
                 "description": "pretty printing STL classes",
                 "text": "-enable-pretty-printing"
             }],
-            "program": "C:\\Users\\veryp\\Desktop\\build\\interview_tasks\\2gis\\gcc-12\\debug\\2gis-ut.exe",
-            "linux": {
-                "program": "/home/xzzyyy/build/interview_tasks/2gis/gcc-11/debug/2gis-ut"
-            },
             "cwd": "${workspaceFolder}",
-            "windows": {
+            "externalConsole": false,
+            "windows":
+            {
+                "name": "UT",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "C:\\Users\\veryp\\Desktop\\build\\interview_tasks\\${relativeFileDirname}\\gcc-12\\debug\\${relativeFileDirname}-ut.exe",
+                "miDebuggerPath": "C:\\Users\\veryp\\Desktop\\MinGW64\\bin\\gdb.exe",
                 "environment": [{
                     "name": "PATH",
                     "value": "C:\\Users\\veryp\\Desktop\\MinGW64\\bin"
                 }]
             },
-            "externalConsole": false
-        },
-        {
-            "name": "misc-ut",
-            "type": "cppdbg",
-            "MIMode": "gdb",
-            "windows":
-            {
-                "miDebuggerPath": "C:\\Users\\veryp\\Desktop\\MinGW64\\bin\\gdb.exe"
-            },
             "linux": {
+                "name": "2gis-ut",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "/home/xzzyyy/build/interview_tasks/${relativeFileDirname}/gcc-11/debug/${relativeFileDirname}-ut",
                 "miDebuggerPath": "/usr/bin/gdb"
-            },
-            "request": "launch",
-            "setupCommands": [{
-                "description": "pretty printing STL classes",
-                "text": "-enable-pretty-printing"
-            }],
-            "program": "C:\\Users\\veryp\\Desktop\\build\\interview_tasks\\gcc-12\\debug\\misc-ut.exe",
-            "linux": {
-                "program": "/home/xzzyyy/build/interview_tasks/gcc-11/debug/misc-ut"
-            },
-            "cwd": "${workspaceFolder}",
-            "windows": {
-                "environment": [{
-                    "name": "PATH",
-                    "value": "C:\\Users\\veryp\\Desktop\\MinGW64\\bin"
-                }]
-            },
-            "externalConsole": false
+            }
         }
     ]
 }

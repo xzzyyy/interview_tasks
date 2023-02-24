@@ -1,115 +1,68 @@
-#include <iostream>
-
-
 // разворот односвязного списка
 
-struct Node
+#include <iostream>
+#include <vector>
+#include <cassert>
+
+#define BOOST_TEST_MODULE tools_for_brokers
+#include <boost/test/included/unit_test.hpp>
+
+struct SLLNode
 {
-    int val;
-    Node* next;
+    int data;
+    SLLNode* next;
 };
 
-Node* reverse(Node* head)
-{
-    if (!head) 
-		return nullptr;
-	
-	Node* prev = nullptr;
-    Node* curr = head;
-    Node* next;
-    
-	while (curr)
+SLLNode* reverse_sll(SLLNode* sll_head) {
+    SLLNode* cur = sll_head;
+    SLLNode* new_dir_next = nullptr;
+    while (cur != nullptr)
     {
-        next = curr->next;
-        curr->next = prev;
-		
-        prev = curr;
-        curr = next;
+        SLLNode* old_dir_next = cur->next;
+        cur->next = new_dir_next;
+        new_dir_next = cur;
+        cur = old_dir_next;
     }
-	
-    return prev;
+    return new_dir_next;
 }
 
-// prev = null; curr = 1; next = ?;
-// prev = 1; curr = 2; next = 2;
-// prev = 2; curr = 5; next = 5;
-// prev = 5; curr = 10; next = 10;
-// prev = 10; curr = 3; next = 3;
-
-
-void print_fwdlist(Node* head)
+SLLNode* create_sll(std::vector<int>& nodes_data, std::vector<SLLNode>& nodes)
 {
-    if (!head)
-        return;
+    assert(nodes_data.size() == nodes.size());
     
-    do
+    for (size_t i = 0; i < nodes_data.size(); ++i)
     {
-        std::cout << head->val;
-        
-        head = head->next;
-        if (head)
-            std::cout << "->";
+        nodes[i].data = nodes_data[i];
+        nodes[i].next = i < nodes.size() - 1 ? &nodes[0] + i + 1 : nullptr;
     }
-    while (head);
-    
-    std::cout << std::endl;
+    return &nodes[0];
 }
 
-int main()
+std::vector<int> extract_values(SLLNode* sll_head)
 {
-    Node fwd_list[5] = { 
-        { 1, &fwd_list[1] }, 
-        { 2, &fwd_list[2] }, 
-        { 5, &fwd_list[3] }, 
-        { 10, &fwd_list[4] }, 
-        { 3, nullptr }
-    };
-    
-    print_fwdlist(fwd_list);
-    print_fwdlist(reverse(fwd_list));
-}
-
-
-
-
-
-
-// --- Less pretty solution ---
-
-#ifdef DEBUG
-std::string to_string(Node* n)
-{
-	return n ? std::to_string(n->val) : "null";
-}
-#endif
-
-Node* reverse2(Node* head)
-{
-    if (!head)
-        return nullptr;
-        
-    Node* prev = nullptr;
-    Node* curr = head;
-    Node* next = head->next;
-    
-    while (next)
+    std::vector<int> res;
+    SLLNode* cur = sll_head;
+    while (cur != nullptr)
     {
-        curr->next = prev;
-        
-        prev = curr;
-        curr = next;
-        next = next->next;
-        
-#ifdef DEBUG
-        std::cout << "prev " << to_string(prev) 
-        		  << " curr " << to_string(curr) 
-        		  << " next " << to_string(next) 
-        << std::endl;
-#endif
+        res.push_back(cur->data);
+        cur = cur->next;
     }
-    curr->next = prev;
-    
-    return curr;
+    return res;
 }
 
-// --- Less pretty solution ---
+void test_sll_case(std::vector<int>&& src, std::vector<int>&& expected)
+{
+    assert(src.size() == expected.size());
+    std::vector<SLLNode> tc_nodes(src.size());
+
+    SLLNode* sll = create_sll(src, tc_nodes);
+    SLLNode* reversed = reverse_sll(sll);
+    BOOST_TEST(extract_values(reversed) == expected);
+}
+
+BOOST_AUTO_TEST_CASE(test_reverse_sll) 
+{
+    test_sll_case({ 1, 2, 3, 4, 5 }, { 5, 4, 3, 2, 1 });
+    test_sll_case({ 3, 4, 2, 5 }, { 5, 2, 4, 3 });
+    test_sll_case({}, {});
+}

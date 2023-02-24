@@ -32,8 +32,9 @@
                 "_UNICODE"
             ],
             "cStandard": "gnu17",
-            "intelliSenseMode": "linux-gcc-x64",
-            "compilerPath": "c:/users/veryp/desktop/mingw64/bin/g++.exe"
+            "intelliSenseMode": "windows-gcc-x64",
+            "compilerPath": "c:/users/veryp/desktop/mingw64/bin/g++.exe",
+            "cppStandard": "c++17"
         }
     ],
     "version": 4

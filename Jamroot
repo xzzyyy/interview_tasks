@@ -14,3 +14,4 @@ unit-test misc-ut
 build-project 2gis ;
 build-project elvis ;
 build-project luxoft_worldquant ;
+build-project tools_for_brokers ;

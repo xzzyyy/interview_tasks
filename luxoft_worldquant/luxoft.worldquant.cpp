@@ -1,14 +1,14 @@
+#include <string>
+#include <vector>
 #include <utility>      // std::move
-#include <string>       // std::string
-#include <stdexcept>    // std::invalid_argument
+#include <stdexcept>
 
 #define BOOST_TEST_MODULE luxoft_worldquant
 #include <boost/test/included/unit_test.hpp>
 
 // написать template функцию с двумя итераторами на входе и унарным оператором, которая ходит между итераторами и
 // выполняет оператор для каждого элемента
-template<typename ForwardIt, typename Func>
-void iterate(ForwardIt first, ForwardIt last, Func f)
+template<typename ForwardIt, typename Func> void process(ForwardIt first, ForwardIt last, Func f)
 {
     auto it = first;
     while (it != last)
@@ -18,23 +18,66 @@ void iterate(ForwardIt first, ForwardIt last, Func f)
     }
 }
 
-// написать класс с move-конструктором
-template<typename T> struct AcceptsMoveInit
+BOOST_AUTO_TEST_CASE(test_template_func)
 {
-    T val;
+    std::vector<int> arr{ 9, 9, 4, 2, 1, 9, 9, 9, 7, 7 };
+    const std::vector<int> expected{ 9 * 9, 9 * 9, 4 * 4, 2 * 2, 1 * 1, 9 * 9, 9 * 9, 9 * 9, 7 * 7, 7 * 7 };
+
+    process(arr.begin(), arr.end(), [](int& val) { val *= val; });
+    BOOST_TEST(expected == arr);
+}
+
+// написать класс с move-конструктором
+// rem.: Did they mean implicit move-constructor is not solution and I should write it by hand?
+struct MoveConstrImplicit
+{
+    std::string val;
+
+    MoveConstrImplicit()
+        : val(10000, 'x')
+    {
+        
+    }
 
     // move-constructor is implicitly created
 };
 
-BOOST_AUTO_TEST_CASE(test_move_const_class)
+struct MoveConstr
 {
-    constexpr std::string_view STR = "Hello";
-    
-    AcceptsMoveInit<std::string> from = { std::string{ STR } };
-    AcceptsMoveInit<std::string> to{ std::move(from) };
+    std::string val;
 
-    BOOST_TEST(STR == to.val);
-    BOOST_TEST_MESSAGE("to avoid compiler removal of this code: " << to.val);
+    MoveConstr()
+        : val(10000, 'x')
+    {
+        
+    }
+
+    MoveConstr(MoveConstr&& from) noexcept
+        : val(std::move(from.val))
+    {
+
+    }
+};
+
+template<typename T> void get_addresses(uint64_t& from_addr, uint64_t& to_addr)
+{
+    T from;
+    from_addr = reinterpret_cast<uint64_t>(from.val.c_str());
+    
+    T to{ std::move(from) };
+    to_addr = reinterpret_cast<uint64_t>(to.val.c_str());
+}
+
+BOOST_AUTO_TEST_CASE(test_move_constr)
+{
+    uint64_t from_addr = 0;
+    uint64_t to_addr = 0;
+    
+    get_addresses<MoveConstrImplicit>(from_addr, to_addr);
+    BOOST_TEST(from_addr == to_addr);
+
+    get_addresses<MoveConstr>(from_addr, to_addr);
+    BOOST_TEST(from_addr == to_addr);
 }
 
 // задание на рефакторинг. 

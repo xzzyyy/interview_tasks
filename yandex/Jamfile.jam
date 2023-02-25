@@ -1,0 +1,7 @@
+import testing ;
+
+project yandex ;
+
+unit-test yandex-ut
+    : houses.cpp
+    ;

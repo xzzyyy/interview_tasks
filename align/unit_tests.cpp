@@ -2,20 +2,30 @@
 #include <boost/test/included/unit_test.hpp>
 #include "../align/auto.h"
 
-BOOST_AUTO_TEST_CASE(TestAuto)
+BOOST_AUTO_TEST_CASE(test_directions)
 {
 	Auto a;
 
-	BOOST_TEST(a.get_state() == "^");
-	BOOST_TEST(a.turn_left() == '<');
-	BOOST_TEST(a.turn_right() == '^');
-	BOOST_TEST(a.turn_right() == '>');
-	BOOST_TEST(a.turn_right() == 'v');
-	BOOST_TEST(a.turn_right() == '<');
-	BOOST_TEST(a.turn_left() == 'v');
+	BOOST_TEST(a.state() == "^");
+	BOOST_TEST(a.turn_left() == "<");
+	BOOST_TEST(a.turn_right() == "^");
+	BOOST_TEST(a.turn_right() == ">");
+	BOOST_TEST(a.turn_right() == "v");
+	BOOST_TEST(a.turn_right() == "<");
+	BOOST_TEST(a.turn_left() == "v");
+}
 
-	a.should_beep();
-	BOOST_TEST(a.get_state() == "v beep");
-	a.new_cycle();
-	BOOST_TEST(a.get_state() == "v");
+BOOST_AUTO_TEST_CASE(test_beep)
+{
+	Auto a;
+	
+	BOOST_TEST(a.should_beep() == "^ beep");
+	
+	a.turn_right();
+	BOOST_TEST(a.should_beep() == "> beep");
+	
+	a.turn_left();
+	BOOST_TEST(a.should_beep() == "^ beep");
+	
+	BOOST_TEST(a.state() == "^");
 }

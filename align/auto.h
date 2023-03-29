@@ -4,19 +4,17 @@
 #include <string_view>
 #include <string>
 
-class Auto
+struct Auto
 {
-	static constexpr std::string_view DIRS_STR = "^>v<";
-	int _dir = 0;
-	bool _beep = false;
-
-public:
 	Auto();
-	void new_cycle();
-	char turn_right();
-	char turn_left();
-	void should_beep();
-	std::string get_state() const;
+	std::string turn_right();
+	std::string turn_left();
+	std::string should_beep();
+	std::string state() const;
+
+private:
+	static constexpr std::string_view _DIRS_STR = "^>v<";
+	int _dir = 0;
 };
 
 #endif

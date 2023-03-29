@@ -3,5 +3,5 @@ import testing ;
 project align ;
 
 unit-test align-ut
-    : auto.cpp unit_tests.cpp
+    : auto.cpp
     ;

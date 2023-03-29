@@ -1,34 +1,31 @@
-#include <string>
-#include "auto.h"
-using namespace std;
+#define BOOST_TEST_MODULE mytests
+#include <boost/test/included/unit_test.hpp>
+#include "../align/auto.h"
 
-
-Auto::Auto()
+BOOST_AUTO_TEST_CASE(test_directions)
 {
+    Auto a;
+
+    BOOST_TEST(a.state() == "^");
+    BOOST_TEST(a.turn_left() == "<");
+    BOOST_TEST(a.turn_right() == "^");
+    BOOST_TEST(a.turn_right() == ">");
+    BOOST_TEST(a.turn_right() == "v");
+    BOOST_TEST(a.turn_right() == "<");
+    BOOST_TEST(a.turn_left() == "v");
 }
 
-string Auto::turn_right()
+BOOST_AUTO_TEST_CASE(test_beep)
 {
-    ++_dir;
-    if (_dir == static_cast<int>(_DIRS_STR.length()))
-        _dir = 0;
-    return string(1, _DIRS_STR[_dir]);
-}
+    Auto a;
 
-string Auto::turn_left()
-{
-    --_dir;
-    if (_dir == -1)
-        _dir = _DIRS_STR.length() - 1;
-    return string(1, _DIRS_STR[_dir]);
-}
+    BOOST_TEST(a.should_beep() == "^ beep");
 
-string Auto::should_beep()
-{
-    return state() + " beep";
-}
+    a.turn_right();
+    BOOST_TEST(a.should_beep() == "> beep");
 
-string Auto::state() const
-{
-    return string(1, _DIRS_STR[_dir]);
+    a.turn_left();
+    BOOST_TEST(a.should_beep() == "^ beep");
+
+    BOOST_TEST(a.state() == "^");
 }

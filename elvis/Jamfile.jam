@@ -4,11 +4,11 @@ project elvis
     : requirements <include>.
     ;
 
-obj obj_elvis : elvis.cpp ;
+obj test_task_obj : test_task.cpp ;
 
-unit-test test_elvis 
-    : obj_elvis test_elvis.cpp
+unit-test test_task_ut 
+    : test_task_obj test_task_ut.cpp
     ;
-exe elvis 
-    : obj_elvis main_elvis.cpp 
+exe test_task 
+    : test_task_obj test_task_main.cpp 
     ;

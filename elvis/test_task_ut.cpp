@@ -2,7 +2,7 @@
 #include <chrono>
 #define BOOST_TEST_MODULE test_elvis
 #include <boost/test/included/unit_test.hpp>
-#include "elvis.hpp"
+#include "test_task.hpp"
 using namespace std;
 
 constexpr string_view INPUT_TEST_FILES_PATH = "elvis/test/in";

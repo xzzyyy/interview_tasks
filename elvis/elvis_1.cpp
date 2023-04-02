@@ -7,31 +7,67 @@
 // напечатать первый элемент, потом просуммировать их попарно и выдать результат,
 //  т.е. "77.0, 154.0, 154.0, 154.0  ...."
 
+// #include <iostream>
+
+// void set_array(char a[]) {
+//     memset(a, 77, sizeof(a));
+// }
+
+// double* sum_pair(char a[], int idx) {
+//     double s = a[idx] + a[idx+1];
+//     return &s;
+// }
+
+// int main()
+// {
+//     const unsigned int sz = 128;
+//     char a[sz] = {};
+//     memset(a, 0, sizeof(a));
+//     set_array(a);
+//     double* s[sz] = {};
+//     for (int i = -1; i < sz; ++i)
+//     {
+//         if (i < 0)
+//             std::cout << a[0] << " ";
+//         s[i] = sum_pair(a, i);
+//     }
+//     for (int i = 0; i < sz; ++i)
+//         std::cout << s[i] << " ";
+// }
+
+#include <cstring>                      // missing `#include` (ex. `memset` requires `cstring`)
 #include <iostream>
 
-void set_array(char a[]) {
-    memset(a, 77, sizeof(a));
+void set_array(char a[], unsigned sz) {
+    memset(a, 77, sz);                  // C-style array doesn't hold length inside
 }
 
-double* sum_pair(char a[], int idx) {
-    double s = a[idx] + a[idx+1];       // a[-1] -- out of array
-    return &s;                          // returning address of stack variable, doesn't exist after return
+double sum_pair(char a[], int idx) {
+    return a[idx] + a[idx+1];           // returning address of stack variable
 }
 
 int main()
 {
     const unsigned int sz = 128;
-    char a[sz] = {};                    // redundant, we will memset array to 77 later
-    memset(a, 0, sizeof(a));            // redundant, we already initialized a with \0s
-    set_array(a);
-    double* s[sz] = {};
-    for (int i = -1; i < sz; ++i)       // ot of bound on i == sz - 1
-                                        // will never be executed because comparing signed -1 and unsigned int
-    {
-        if (i < 0)
-            std::cout << a[0] << " ";
-        s[i] = sum_pair(a, i);
-    }
-    for (int i = 0; i < sz; ++i)        // s[sz - 1] is not filled
+    char a[sz] = {};
+    // memset(a, 0, sizeof(a));         // redundant array initialization
+    set_array(a, sz);
+    double s[sz] = {};
+
+    // for (int i = -1; i < sz; ++i)    // out of bound access (first cycle, last cycle)
+    // {                                // implicit arithmetic conversion (ex. signed, unsigned comparison)
+    //     if (i < 0)
+    //         std::cout << a[0] << " ";
+    //     s[i] = sum_pair(a, i);
+    // }
+
+    for (unsigned i = 0; i < sz; ++i)
+        s[i] =
+            i == 0 || i == sz - 1 ?
+                a[i] :
+                sum_pair(a, i);
+
+    for (int i = 0; i < sz; ++i)
         std::cout << s[i] << " ";
+    std::cout << std::endl;             // no EOL printed
 }

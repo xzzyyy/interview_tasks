@@ -67,7 +67,7 @@ int main()
                 a[i] :
                 sum_pair(a, i);
 
-    for (int i = 0; i < sz; ++i)
+    for (unsigned i = 0; i < sz; ++i)
         std::cout << s[i] << " ";
     std::cout << std::endl;             // no EOL printed
 }

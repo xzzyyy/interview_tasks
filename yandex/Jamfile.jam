@@ -2,6 +2,5 @@ import testing ;
 
 project yandex ;
 
-unit-test yandex-ut
-    : houses.cpp
-    ;
+unit-test houses : houses.cpp ;
+unit-test is_palindrome : is_palindrome.cpp ;

@@ -1,0 +1,15 @@
+project user-config
+    : build-dir "C:/Users/veryp/Desktop/build"
+    ;
+
+using gcc
+    :
+    : "C:/Users/veryp/Desktop/soft/MinGW64/bin/c++.exe"
+    ;
+
+alias boost
+    :
+    :
+    :
+    : <include>C:/Users/veryp/Desktop/libs/boost_1_80_0
+    ;

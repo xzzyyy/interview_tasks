@@ -1,0 +1,147 @@
+------------------------------------------------------------------------------------------------------------
+template<class ExPol> std::vector<int> generator_speed2(ExPol&& ex_pol, const int count)
+{
+    std::vector<int> res(count * (count + 1));
+
+    std::vector<int> indices(count);
+    iota(indices.begin(), indices.end(), 0);
+
+    for_each_n(ex_pol, indices.begin(), count, [this, count, &res, &ex_pol, &indices](int& row_idx)
+    {
+        res[row_idx] = row_idx;
+        auto start_iter = res.begin() + row_idx * (count + 1);
+        if (func(row_idx))
+            transform(ex_pol, indices.cbegin(), indices.cend(), start_iter,
+                      [row_idx](const int src_v){ return src_v * row_idx; });
+        else
+            fill_n(ex_pol, start_iter, count, std::numeric_limits<int>::max());
+    });
+
+    res.erase(remove(ex_pol, res.begin(), res.end(), std::numeric_limits<int>::max()),
+              res.end());
+    return res;
+}
+
+veryp@MSI ~/projects/interview_tasks
+$ ~/Desktop/build/interview_tasks/2gis/gcc-12/debug/optimization 20000,25000
+src | exec_time (ms): 2752
+for | exec_time (ms): 1673
+for_each | exec_time (ms): 5478
+src | exec_time (ms): 4350
+for | exec_time (ms): 2673
+for_each | exec_time (ms): 8485
+
+veryp@MSI ~/projects/interview_tasks
+$ ~/Desktop/build/interview_tasks/2gis/gcc-12/release/optimization 20000,25000
+src | exec_time (ms): 445
+for | exec_time (ms): 499
+for_each | exec_time (ms): 1044
+src | exec_time (ms): 719
+for | exec_time (ms): 753
+for_each | exec_time (ms): 1542    
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+template<class ExPol> std::vector<int> generator_speed2(ExPol&& ex_pol, const int count)
+{
+    std::vector<std::vector<int>> computed(count, std::vector<int>(count + 1));
+    for (int i = 0; i < count; ++i)
+        computed[i][0] = i;
+
+    for_each(ex_pol, computed.begin(), computed.end(), [count](std::vector<int>& sub_arr)
+    {
+        if (!func(sub_arr[0]))
+        {
+            sub_arr[1] = std::numeric_limits<int>::max();
+            return;
+        }
+
+        iota(sub_arr.begin() + 1, sub_arr.end(), 0);
+        for (int j = 0; j < count; ++j)
+            sub_arr[j + 1] = sub_arr[0] * j;
+    });
+
+    std::vector<int> result;
+    for (const auto& sub_arr : computed)
+    {
+        result.push_back(sub_arr[0]);
+        if (sub_arr[1] != std::numeric_limits<int>::max())
+            result.insert(result.cend(), sub_arr.cbegin() + 1, sub_arr.cend());
+    }
+    return result;
+}
+
+veryp@MSI ~/projects/interview_tasks
+$ ~/Desktop/build/interview_tasks/2gis/gcc-12/debug/optimization 20000
+src | exec_time (ms): 2873
+for, par | exec_time (ms): 1663
+for, par_unseq | exec_time (ms): 985
+for_each, par | exec_time (ms): 1822
+for_each, par_unseq | exec_time (ms): 1888
+
+veryp@MSI ~/projects/interview_tasks
+$ ~/Desktop/build/interview_tasks/2gis/gcc-12/release/optimization 20000
+src | exec_time (ms): 493
+for, par | exec_time (ms): 362
+for, par_unseq | exec_time (ms): 369
+for_each, par | exec_time (ms): 909
+for_each, par_unseq | exec_time (ms): 989
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------

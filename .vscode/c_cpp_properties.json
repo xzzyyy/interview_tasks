@@ -1,19 +1,40 @@
 {
     "configurations": [
         {
-            "name": "Win32",
+            "name": "cygwin",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${env:USERPROFILE}/Desktop/libs/boost_1_80_0"
+                "${env:USERPROFILE}/Desktop/libs/boost_1_80_0",
+                "C:/cygwin64/lib/gcc/x86_64-pc-cygwin/11/include/c++",
+                "c:/cygwin64/lib/gcc/x86_64-pc-cygwin/11/include/c++/x86_64-pc-cygwin",
+                "c:/cygwin64/usr/include",
+                "C:/cygwin64/lib/gcc/x86_64-pc-cygwin/11/include"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "c:\\users\\veryp\\desktop\\mingw64\\bin\\c++.exe",
+            "compilerPath": "",
+            "cStandard": "c17",
+            "intelliSenseMode": "windows-gcc-x64",
+            "cppStandard": "c++20"
+        },
+        {
+            "name": "mingw",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "c:/users/veryp/desktop/libs/boost_1_80_0"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
             "cStandard": "gnu17",
-            "intelliSenseMode": "linux-gcc-x64"
+            "intelliSenseMode": "windows-gcc-x64",
+            "compilerPath": "c:/users/veryp/desktop/soft/mingw64/bin/c++.exe",
+            "cppStandard": "c++17"
         }
     ],
     "version": 4

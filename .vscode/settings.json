@@ -1,5 +1,5 @@
 {
-    "C_Cpp.default.cppStandard": "c++20",
+    "C_Cpp.default.cppStandard": "c++17",
     "files.associations": {
         "array": "cpp",
         "atomic": "cpp",
@@ -73,6 +73,24 @@
         "*.ipp": "cpp",
         "csetjmp": "cpp",
         "csignal": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "ios": "cpp",
+        "any": "cpp",
+        "chrono": "cpp",
+        "barrier": "cpp",
+        "charconv": "cpp",
+        "coroutine": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "regex": "cpp",
+        "rope": "cpp",
+        "slist": "cpp",
+        "latch": "cpp",
+        "ranges": "cpp",
+        "scoped_allocator": "cpp",
+        "shared_mutex": "cpp",
+        "span": "cpp",
+        "syncstream": "cpp",
+        "valarray": "cpp"
     }
 }

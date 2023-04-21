@@ -1,0 +1,7 @@
+import testing ;
+
+project yandex ;
+
+unit-test houses : houses.cpp ;
+unit-test is_palindrome : is_palindrome.cpp ;
+unit-test equilibrium_point : equilibrium_point.cpp ;

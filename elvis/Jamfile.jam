@@ -1,0 +1,13 @@
+import testing ;
+
+project elvis
+    : requirements <include>.
+    ;
+
+obj test_task_obj : test_task.cpp ;
+
+unit-test test_task_ut 
+    : test_task_obj test_task_ut.cpp
+    ;
+exe test_task : test_task_obj test_task_main.cpp ;
+exe 1-fix_errors : 1-fix_errors.cpp ;
